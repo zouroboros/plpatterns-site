@@ -1,0 +1,56 @@
+cabal-version:      2.4
+name:               plpatterns-site
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+synopsis:           Graphql backend for plpatterns site
+
+-- A longer description of the package.
+description:        Provides an endpoint for querying common patterns in different programming languages
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+license:            AGPL-3.0-or-later
+author:             Zouroboros
+maintainer:         zouroboros@zoho.eu
+
+-- A copyright notice.
+copyright:          Zouroboros 2023
+category:           Backend, API, Graphql
+extra-source-files: CHANGELOG.md
+
+library
+    exposed-modules:  MyLib
+
+    -- Modules included in this library but not exported.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    base ^>=4.16.4.0
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+executable plpatterns-backend
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules:
+        Server.Patterns,
+        Server.Scotty
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:
+        base ^>=4.16.4.0,
+        plpatterns-site,
+        bytestring >= 0.11.3.1,
+        morpheus-graphql >= 0.27.0,
+        morpheus-graphql-app >= 0.27.0,
+        scotty >= 0.12.1,
+        text >= 1.2.5,
+        warp >= 3.3.25
+
+    hs-source-dirs:   app
+    default-language: Haskell2010
