@@ -5,23 +5,26 @@ module FileBasedDb where
 import ExampleDb (ExampleDb(ExampleDb, categories, exampleById, examplesByCategory),
     Example(Example, id, name, example, description))
 import System.Directory (listDirectory, doesDirectoryExist, makeAbsolute, findFile)
-import System.FilePath (takeFileName, (</>))
+import System.FilePath (takeFileName, (</>), dropExtension)
 import Data.Maybe (catMaybes)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import Data.Foldable
 
-createDb :: FilePath -> ExampleDb IO FilePath String
+createDb :: FilePath -> ExampleDb IO FilePath T.Text
 createDb basePath = ExampleDb {
     categories = FileBasedDb.categories basePath,
     examplesByCategory = FileBasedDb.examplesByCategory basePath,
     exampleById = FileBasedDb.exampleById basePath
 }
 
-categories :: FilePath -> IO [String]
+categories :: FilePath -> IO [T.Text]
 categories basePath = do
     folders <- listDirectory basePath
     let names = map takeFileName folders
-    return names
+    return $ map T.pack names
 
-tryReadExample :: FilePath -> FilePath -> IO (Maybe (Example FilePath String))
+tryReadExample :: FilePath -> FilePath -> IO (Maybe (Example FilePath T.Text))
 tryReadExample basePath exampleId = do
     let examplePath = basePath </> exampleId
     absolutePath <- makeAbsolute examplePath
@@ -32,12 +35,13 @@ tryReadExample basePath exampleId = do
             return (Just example)
         else return Nothing
 
-readExample :: FilePath -> FilePath -> IO (Example FilePath String)
+readExample :: FilePath -> FilePath -> IO (Example FilePath T.Text)
 readExample basePath exampleId = do
     let examplePath = basePath </> exampleId
+    files <- listDirectory examplePath
     (name, info) <- readInfo $ examplePath </> "info"
-    Just exampleCode <- findFile [examplePath] "example"
-    example <- readFile exampleCode
+    let Just exampleFile = find (\file -> dropExtension file == "example") files
+    exampleCode <- TIO.readFile $ examplePath </> exampleFile
     return Example {
         id = exampleId,
         name = name,
@@ -45,18 +49,18 @@ readExample basePath exampleId = do
         example = exampleCode
     }
 
-readInfo :: FilePath -> IO (String, String)
+readInfo :: FilePath -> IO (T.Text, T.Text)
 readInfo path = do
-    content <- readFile path
-    let name:_:description = lines content
-    return (name, unlines description)
+    content <- TIO.readFile path
+    let name:_:description = T.lines content
+    return (name, T.unlines description)
 
-examplesByCategory :: FilePath -> String -> IO (Maybe [Example FilePath String])
+examplesByCategory :: FilePath -> T.Text -> IO (Maybe [Example FilePath T.Text])
 examplesByCategory basePath category = do
-    folders <- listDirectory $ basePath </> category
+    folders <- listDirectory $ basePath </> T.unpack category
     let names = map takeFileName folders
-    examples <- mapM (\name -> tryReadExample basePath (category </> name)) names
+    examples <- mapM (\name -> tryReadExample basePath (T.unpack category </> name)) names
     return $ Just $ catMaybes examples
 
-exampleById :: FilePath -> FilePath -> IO (Maybe (Example FilePath String))
+exampleById :: FilePath -> FilePath -> IO (Maybe (Example FilePath T.Text))
 exampleById = tryReadExample
