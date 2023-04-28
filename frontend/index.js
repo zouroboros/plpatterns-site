@@ -18,7 +18,7 @@ const routes = {
 }
 
 function defaultRoute(url, container) {
-    container.innerHTML = `<h2>Sorry couldn't find this route</h2>`
+    container.innerHTML = `<h2>Sorry couldn't find this page.</h2>`
 }
 
 async function navigateTo(routes, url, defaultRoute) {
