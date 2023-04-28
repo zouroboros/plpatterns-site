@@ -56,7 +56,8 @@ executable plpatterns-backend
         scotty >= 0.12.1,
         text >= 1.2.5,
         warp >= 3.3.25,
-        dotenv >= 0.11.0.0
+        dotenv >= 0.11.0.0,
+        filepath >= 1.4.2.2
 
     hs-source-dirs:   app
     default-language: Haskell2010

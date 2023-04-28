@@ -1,8 +1,9 @@
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module FileBasedDb where
 
-import ExampleDb (ExampleDb(ExampleDb, categories, exampleById, examplesByCategory),
+import ExampleDb (ExampleDb(ExampleDb, categories, exampleById, examplesByCategory, exampleByCategoryAndName),
     Example(Example, id, name, example, description))
 import System.Directory (listDirectory, doesDirectoryExist, makeAbsolute, findFile)
 import System.FilePath (takeFileName, (</>), dropExtension)
@@ -15,7 +16,8 @@ createDb :: FilePath -> ExampleDb IO FilePath T.Text
 createDb basePath = ExampleDb {
     categories = FileBasedDb.categories basePath,
     examplesByCategory = FileBasedDb.examplesByCategory basePath,
-    exampleById = FileBasedDb.exampleById basePath
+    exampleById = FileBasedDb.exampleById basePath,
+    exampleByCategoryAndName = FileBasedDb.exampleByCategoryAndName basePath
 }
 
 categories :: FilePath -> IO [T.Text]
@@ -64,3 +66,6 @@ examplesByCategory basePath category = do
 
 exampleById :: FilePath -> FilePath -> IO (Maybe (Example FilePath T.Text))
 exampleById = tryReadExample
+
+exampleByCategoryAndName :: FilePath -> T.Text -> T.Text -> IO (Maybe (Example FilePath T.Text))
+exampleByCategoryAndName basePath category name = FileBasedDb.exampleById basePath (T.unpack category </> T.unpack (T.toLower (T.replace " " "-" name)))

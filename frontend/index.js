@@ -14,6 +14,14 @@ const routes = {
 
    "^/languages/(?<languageName>[a-zA-Z]+)$": async function ({ languageName }, container) {
         container.innerHTML = `<h1>Examples for ${languageName}</h1>`
+        const pattern = await api.loadPatternByLanguage(languageName)
+        container.innerHTML += `<ul>
+            ${pattern.map(pattern => `<li><a href="#/pattern/${languageName}/${pattern.name}">${pattern.name}</a></li>`).join(``)}
+            </ul>`
+    },
+    "^/pattern/(?<languageName>[a-zA-Z]+)/(?<patternName>[^\n\r/]+$)": async function ( { languageName, patternName }, container) {
+
+        container.innerHTML = `<h1>${decodeURI(patternName)}</h1>`
     }
 }
 

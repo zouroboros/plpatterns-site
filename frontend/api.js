@@ -1,12 +1,12 @@
 const endpoint = `http://localhost:3000/patterns`
 
-async function query(query) {
+async function query(query, variables = {}) {
     const response = await fetch(endpoint, {
         method: `POST`,
         body: JSON.stringify({
             operation: null,
-            query: query,
-            variables: {}
+            query,
+            variables
         })
     })
 
@@ -22,4 +22,11 @@ async function query(query) {
 export async function loadLanguages() {
     const data = await query("{ languages { name } }")
     return data.languages
+}
+
+export async function loadPatternByLanguage(language) {
+    // todo improve endpoint on the server
+    const data = await query('query languageAndPattern($language: String!) { pattern(language: $language) { name } }', { language })
+    console.log(data)
+    return data.pattern
 }
