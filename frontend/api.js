@@ -25,8 +25,13 @@ export async function loadLanguages() {
 }
 
 export async function loadPatternByLanguage(language) {
-    // todo improve endpoint on the server
     const data = await query('query languageAndPattern($language: String!) { pattern(language: $language) { name } }', { language })
-    console.log(data)
     return data.pattern
+}
+
+export async function loadPatternByLanguageAndName(language, name) {
+    const data = await query('query pattern($language: String!, $name: String!) { pattern(language: $language, name: $name) { name, code, description } }', 
+        { language, name })
+    const [ pattern ] = data.pattern
+    return pattern
 }

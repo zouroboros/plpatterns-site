@@ -16,12 +16,21 @@ const routes = {
         container.innerHTML = `<h1>Examples for ${languageName}</h1>`
         const pattern = await api.loadPatternByLanguage(languageName)
         container.innerHTML += `<ul>
-            ${pattern.map(pattern => `<li><a href="#/pattern/${languageName}/${pattern.name}">${pattern.name}</a></li>`).join(``)}
+                ${pattern.map(pattern => `<li>
+                    <a href="#/pattern/${languageName}/${pattern.name}">${pattern.name}</a>
+                </li>`).join(``)}
             </ul>`
     },
     "^/pattern/(?<languageName>[a-zA-Z]+)/(?<patternName>[^\n\r/]+$)": async function ( { languageName, patternName }, container) {
-
-        container.innerHTML = `<h1>${decodeURI(patternName)}</h1>`
+        const decodedPatterName = decodeURI(patternName)
+        container.innerHTML = `<h1>${decodedPatterName}</h1>`
+        const pattern = await api.loadPatternByLanguageAndName(languageName, decodedPatterName)
+        container.innerHTML += `<div>
+                <pre><code>${pattern.code}</code></pre>
+            </div>
+            <div>
+                <p>${pattern.description}</p>
+            </div>`
     }
 }
 
