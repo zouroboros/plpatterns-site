@@ -13,15 +13,27 @@ import Data.Morpheus.App (runApp)
 import Data.Morpheus.Types (App, render)
 import qualified Server.Patterns as Patterns
 import Network.Wai.Handler.Warp (defaultSettings, runSettings, setPort)
-import Web.Scotty (ActionM, RoutePattern, ScottyM, body, get, param, post, raw, scottyApp)
+import Web.Scotty (ActionM, RoutePattern, ScottyM, body, get, param, post, raw, scottyApp, addHeader)
+import Data.ByteString.Lazy (ByteString)
+import Web.Scotty.Trans (ActionT)
+import Data.Text.Lazy (Text)
+import Control.Monad (when)
 
 isSchema :: ActionM String
 isSchema = param "schema"
 
-httpEndpoint :: RoutePattern -> App e IO -> ScottyM ()
-httpEndpoint route app = do
-  get route $ (isSchema *> raw (render app)) <|> raw httpPlayground
-  post route $ raw =<< (liftIO . runApp app =<< body)
+httpEndpoint :: Bool -> Maybe Text -> RoutePattern -> App e IO -> ScottyM ()
+httpEndpoint enablePlayground allowOrigin route app = do
+  when enablePlayground $ get route $ (isSchema *> raw (render app)) <|> raw httpPlayground
+  post route $ queryEndpoint allowOrigin app
+
+queryEndpoint :: Maybe Text -> App e IO -> ActionM ()
+queryEndpoint allowOrigin app = do
+  let queryProcessor = liftIO . runApp app
+  requestBody <- body
+  maybe (return ()) (addHeader "Access-Control-Allow-Origin") allowOrigin 
+  response <- queryProcessor requestBody
+  raw response
 
 startServer :: ScottyM () -> IO ()
 startServer app = do
@@ -30,10 +42,10 @@ startServer app = do
   where
     settings = setPort 3000 defaultSettings
 
-scottyServer :: IO ()
-scottyServer = do
+scottyServer :: Bool -> Maybe Text -> IO ()
+scottyServer enablePlayground allowOrigin = do
   startServer httpApp
   where
     httpApp :: ScottyM ()
     httpApp = do
-      httpEndpoint "/patterns" Patterns.app
+      httpEndpoint enablePlayground allowOrigin "/patterns" Patterns.app
