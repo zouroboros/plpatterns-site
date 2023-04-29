@@ -1,4 +1,4 @@
-const endpoint = `http://localhost:3000/patterns`
+const endpoint = import.meta.env.VITE_APILOCATION
 
 async function query(query, variables = {}) {
     const response = await fetch(endpoint, {
