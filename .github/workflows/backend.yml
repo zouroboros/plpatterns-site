@@ -1,0 +1,18 @@
+name: Build backend
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      - run: sudo apt install cabal-install
+      - run: cabal update
+      - run: cabal v2-install
+      - run: cabal v2-build
