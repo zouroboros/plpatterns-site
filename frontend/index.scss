@@ -1,0 +1,12 @@
+@import url("highlight.js/styles/default.css");
+
+.snippet pre {
+    counter-reset: line-number;
+
+    code::before {
+        counter-increment: line-number;
+        content: counter(line-number);
+        display: inline;
+        margin-right: 1em;
+    }
+}
