@@ -55,8 +55,8 @@ executable plpatterns-backend
         morpheus-graphql-app >= 0.27.0,
         scotty >= 0.12.1,
         text >= 1.2.5,
-        warp >= 3.3.25,
-        dotenv >= 0.11.0.0,
+        warp >= 3.3.23,
+        dotenv >= 0.10.0.0,
         filepath >= 1.4.2.2
 
     hs-source-dirs:   app
