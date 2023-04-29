@@ -4,11 +4,16 @@
   "description": "Web frontend for the plpatterns site.",
   "main": "index.js",
   "scripts": {
-    "dev": "npx http-server"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "author": "Zouroboros",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "vite": "^4.3.2"
+  },
+  "dependencies": {
+    "highlight.js": "^11.7.0"
   }
 }

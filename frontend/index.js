@@ -1,4 +1,5 @@
-import * as api from "./api.js";
+import * as api from "./api.js"
+import highlight from "highlight.js"
 
 const routes = {
    "^$": async function (groups, container) {
@@ -25,8 +26,9 @@ const routes = {
         const decodedPatterName = decodeURI(patternName)
         container.innerHTML = `<h1>${decodedPatterName}</h1>`
         const pattern = await api.loadPatternByLanguageAndName(languageName, decodedPatterName)
+        const highlightedCode = highlight.highlightAuto(pattern.code).value
         container.innerHTML += `<div>
-                <pre><code>${pattern.code}</code></pre>
+                <pre><code>${highlightedCode}</code></pre>
             </div>
             <div>
                 <p>${pattern.description}</p>
