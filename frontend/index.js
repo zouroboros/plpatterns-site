@@ -26,7 +26,7 @@ const routes = {
         const decodedPatterName = decodeURI(patternName)
         container.innerHTML = `<h1>${decodedPatterName}</h1>`
         const pattern = await api.loadPatternByLanguageAndName(languageName, decodedPatterName)
-        const highlightedCode = highlight(languageName, pattern.code)
+        const highlightedCode = await highlight(languageName, pattern.code)
         container.innerHTML += `<div class="snippet">
                 <pre>${highlightedCode}</pre>
             </div>

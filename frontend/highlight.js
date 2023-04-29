@@ -1,9 +1,12 @@
-import hl from "highlight.js"
+import hljs from 'highlight.js/lib/core';
 
-export function highlight(language, code) {
+export async function highlight(language, code) {
     const lines = code.split("\n")
+    const lowercaseLanguageName = language.toLowerCase()
+    const languageModule = await import(`./node_modules/highlight.js/es/languages/${lowercaseLanguageName}.js`)
+    hljs.registerLanguage(lowercaseLanguageName, languageModule.default)
     const html = lines
-        .map(line => hl.highlight(line, { language }).value)
+        .map(line => hljs.highlight(line, { language }).value)
         .map(line => `<code>${line}</code>`)
         .join("\n")
     return html
