@@ -35,16 +35,16 @@ queryEndpoint allowOrigin app = do
   response <- queryProcessor requestBody
   raw response
 
-startServer :: ScottyM () -> IO ()
-startServer app = do
+startServer :: Int -> ScottyM () -> IO ()
+startServer port app = do
   httpApp <- scottyApp app
   runSettings settings $ httpApp
   where
-    settings = setPort 3000 defaultSettings
+    settings = setPort port defaultSettings
 
-scottyServer :: Bool -> Maybe Text -> IO ()
-scottyServer enablePlayground allowOrigin = do
-  startServer httpApp
+scottyServer :: Bool -> Maybe Text -> Int -> IO ()
+scottyServer enablePlayground allowOrigin port = do
+  startServer port httpApp
   where
     httpApp :: ScottyM ()
     httpApp = do
