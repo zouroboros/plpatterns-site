@@ -6,7 +6,7 @@ import Configuration.Dotenv (loadFile, defaultConfig)
 import System.Environment (lookupEnv, getEnv)
 import Data.Text.Lazy (pack)
 
-import Server.Scotty (scottyServer)
+import Server.Scotty (scottyServer, ServerConfig (..), )
 
 main :: IO ()
 main = do
@@ -14,7 +14,12 @@ main = do
     enablePlaygroundVar <- lookupEnv "ENABLEPLAYGROUND"
     allowOriginVar <- lookupEnv "ALLOWORIGIN"
     portVar <- getEnv "PORT"
+    dbPathVar <- getEnv "DBPATH"
     let port = read portVar
     let enablePlayground = Just "TRUE" == enablePlaygroundVar
     let allowOrigin = fmap pack allowOriginVar
-    scottyServer enablePlayground allowOrigin port
+    scottyServer (ServerConfig { 
+        enablePlayground = enablePlayground,
+        allowOrigin = allowOrigin,
+        port = port,
+        dbPath = dbPathVar })
