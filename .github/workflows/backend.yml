@@ -31,3 +31,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-stack-work-
       - run: stack build
+  deploy:
+    needs: build
+    if: success() && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - shell: bash
+        env:
+          DEPLOY_WEBHOOK:  ${{secrets.DEPLOY_WEBHOOK}}
+        # we ignore any error just fire and forget
+        run: curl "$DEPLOY_WEBHOOK"
+
