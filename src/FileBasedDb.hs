@@ -26,7 +26,7 @@ categories basePath = do
     folders <- listDirectory basePath
     let names = map takeFileName folders
     let filteredNames = filter (not . ("." `isPrefixOf`)) names 
-    return $ map T.pack names
+    return $ map T.pack filteredNames
 
 tryReadExample :: FilePath -> FilePath -> IO (Maybe (Example FilePath T.Text))
 tryReadExample basePath exampleId = do
