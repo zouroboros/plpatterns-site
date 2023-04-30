@@ -11,6 +11,7 @@ import Data.Maybe (catMaybes)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Data.Foldable
+import Data.List (isPrefixOf)
 
 createDb :: FilePath -> ExampleDb IO FilePath T.Text
 createDb basePath = ExampleDb {
@@ -24,6 +25,7 @@ categories :: FilePath -> IO [T.Text]
 categories basePath = do
     folders <- listDirectory basePath
     let names = map takeFileName folders
+    let filteredNames = filter (not . ("." `isPrefixOf`)) names 
     return $ map T.pack names
 
 tryReadExample :: FilePath -> FilePath -> IO (Maybe (Example FilePath T.Text))
