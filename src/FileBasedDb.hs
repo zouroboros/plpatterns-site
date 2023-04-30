@@ -3,6 +3,7 @@
 
 module FileBasedDb where
 
+import CMark (NodeType(DOCUMENT, TEXT), Node(Node), commonmarkToNode, nodeToCommonmark)
 import ExampleDb (ExampleDb(ExampleDb, categories, exampleById, examplesByCategory, exampleByCategoryAndName),
     Example(Example, id, name, example, description))
 import System.Directory (listDirectory, doesDirectoryExist, makeAbsolute, findFile)
@@ -43,7 +44,7 @@ readExample :: FilePath -> FilePath -> IO (Example FilePath T.Text)
 readExample basePath exampleId = do
     let examplePath = basePath </> exampleId
     files <- listDirectory examplePath
-    (name, info) <- readInfo $ examplePath </> "info"
+    (name, info) <- readInfo $ examplePath </> "info.md"
     let Just exampleFile = find (\file -> dropExtension file == "example") files
     exampleCode <- TIO.readFile $ examplePath </> exampleFile
     return Example {
@@ -56,8 +57,13 @@ readExample basePath exampleId = do
 readInfo :: FilePath -> IO (T.Text, T.Text)
 readInfo path = do
     content <- TIO.readFile path
-    let name:_:description = T.lines content
-    return (name, T.unlines description)
+    let (Node _ DOCUMENT (header:rest)) = commonmarkToNode [] content    
+    return (nodeText header, 
+        nodeToCommonmark [] Nothing (Node Nothing DOCUMENT rest))
+
+nodeText :: Node -> T.Text
+nodeText (Node _ (TEXT text) []) = text
+nodeText (Node _ _ children) = T.concat $ map nodeText children
 
 examplesByCategory :: FilePath -> T.Text -> IO (Maybe [Example FilePath T.Text])
 examplesByCategory basePath category = do
