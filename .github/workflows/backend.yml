@@ -33,7 +33,7 @@ jobs:
       - run: stack build
   deploy:
     needs: build
-    if: success() && github.ref == 'refs/heads/master'
+    if: success() && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - shell: bash
