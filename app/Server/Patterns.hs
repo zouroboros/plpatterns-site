@@ -11,7 +11,8 @@ import Data.Morpheus.Types (GQLType, RootResolver(queryResolver), Undefined, def
 import GHC.Generics (Generic)
 import System.FilePath ((</>))
 
-import ExampleDb(ExampleDb(categories, examplesByCategory, exampleByCategoryAndName), Example(Example, id, name, description, example))
+import ExampleDb(ExampleDb(..), 
+    Example(Example, id, name, description, example))
 import Data.Maybe (catMaybes, fromMaybe)
 
 data Language = Language { name :: Text } deriving (GQLType, Generic)
@@ -22,7 +23,14 @@ data Pattern = Pattern { name :: Text, code :: Text, description :: Text, langua
 
 data PatternArgs = PatternArgs { language :: Text, name :: Maybe Text } deriving (GQLType, Generic)
 
-data Query m = Query { languages :: LanguageArgs -> m [Language], pattern :: PatternArgs -> m [Pattern] } deriving (GQLType, Generic)
+data SearchArgs = SearchArgs { searchFor :: Text } deriving (GQLType, Generic)
+
+data SearchResult = PatternResult { pattern :: Pattern } deriving (GQLType, Generic)
+
+data Query m = Query { 
+    languages :: LanguageArgs -> m [Language], 
+    pattern :: PatternArgs -> m [Pattern],
+    search :: SearchArgs -> m [SearchResult] } deriving (GQLType, Generic)
 
 type Db = ExampleDb IO FilePath Text
 
@@ -31,6 +39,9 @@ resolveLanguages db args = liftEither $ getLanguages db args
 
 resolvePattern :: Db -> PatternArgs -> ResolverQ e IO [Pattern]
 resolvePattern db args = liftEither $ getPattern db args
+
+resolveSearch :: Db -> SearchArgs -> ResolverQ e IO [SearchResult]
+resolveSearch db args = liftEither $ getSearchResults db args
 
 getLanguages :: Db -> LanguageArgs -> IO (Either String [Language])
 getLanguages db LanguageArgs { name = query } = do
@@ -53,12 +64,22 @@ getLanguage :: Text -> IO (Maybe Language)
 getLanguage name = do
     return $ Just Language { name = name }
 
+getSearchResults :: Db -> SearchArgs -> IO (Either String [SearchResult])
+getSearchResults db SearchArgs { searchFor = searchFor } = do
+    examples <- searchForExamples db searchFor
+    let pattern = map (\(language, example) -> toPattern (Language { name = language }) example) examples
+    let results = map PatternResult pattern
+    return $ Right results
+
 toPattern :: Language -> Example FilePath Text -> Pattern
 toPattern language Example { id = id, name = name, description = description, example = example } =
     Pattern { name = name, code = example, description = description, language = language }
 
 rootResolver :: Db -> RootResolver IO () Query Undefined Undefined
-rootResolver db = defaultRootResolver { queryResolver = Query { languages = resolveLanguages db, pattern = resolvePattern db } }
+rootResolver db = defaultRootResolver { queryResolver = Query { 
+    languages = resolveLanguages db, 
+    pattern = resolvePattern db,
+    search = resolveSearch db } }
 
 app :: Db -> App () IO
 app = deriveApp . rootResolver

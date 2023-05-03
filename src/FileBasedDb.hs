@@ -4,8 +4,7 @@
 module FileBasedDb where
 
 import CMark (NodeType(DOCUMENT, TEXT), Node(Node), commonmarkToNode, nodeToCommonmark)
-import ExampleDb (ExampleDb(ExampleDb, categories, exampleById, examplesByCategory, exampleByCategoryAndName),
-    Example(Example, id, name, example, description))
+import ExampleDb (ExampleDb(..), Example(..))
 import System.Directory (listDirectory, doesDirectoryExist, makeAbsolute, findFile)
 import System.FilePath (takeFileName, (</>), dropExtension)
 import Data.Maybe (catMaybes)
@@ -19,7 +18,8 @@ createDb basePath = ExampleDb {
     categories = FileBasedDb.categories basePath,
     examplesByCategory = FileBasedDb.examplesByCategory basePath,
     exampleById = FileBasedDb.exampleById basePath,
-    exampleByCategoryAndName = FileBasedDb.exampleByCategoryAndName basePath
+    exampleByCategoryAndName = FileBasedDb.exampleByCategoryAndName basePath,
+    searchForExamples = FileBasedDb.searchExamples basePath
 }
 
 categories :: FilePath -> IO [T.Text]
@@ -77,3 +77,18 @@ exampleById = tryReadExample
 
 exampleByCategoryAndName :: FilePath -> T.Text -> T.Text -> IO (Maybe (Example FilePath T.Text))
 exampleByCategoryAndName basePath category name = FileBasedDb.exampleById basePath (T.unpack category </> T.unpack (T.toLower (T.replace " " "-" name)))
+
+searchExamples :: FilePath -> T.Text -> IO [(T.Text, Example FilePath T.Text)]
+searchExamples path searchTerm = 
+    let search (category, example) = T.toLower searchTerm `T.isInfixOf` T.toLower (name example) 
+                                     || T.toLower searchTerm `T.isInfixOf` T.toLower (description example)
+        retrieveCategory category = do examples <- FileBasedDb.examplesByCategory path category
+                                       return $ examples >>= \examples -> return (category, examples)
+    in do
+    allCategories <- FileBasedDb.categories path
+    examplesByCategoryMaybe <- mapM retrieveCategory allCategories
+    let examplesByCategory = catMaybes examplesByCategoryMaybe
+    let examplesAndCategory = concatMap (\(category, examples) -> map (\example -> (category, example)) examples)
+                                examplesByCategory
+    let results = filter search examplesAndCategory
+    return results
