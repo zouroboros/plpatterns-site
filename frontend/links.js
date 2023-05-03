@@ -7,5 +7,8 @@ export function language(language) {
 }
 
 export function search(searchFor) {
+    if (searchFor === undefined) {
+        return `/search`
+    }
     return `/search/${encodeURI(searchFor)}`
 }

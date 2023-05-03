@@ -12,10 +12,29 @@ html {
 
 body {
     max-width: 60rem;
+    min-height: 100vh;
+    padding-top: 0;
+    padding-bottom: 0;
     padding-left: var(--horizontal-padding);
     padding-right: var(--horizontal-padding);
+    margin-top: 0;
+    margin-bottom: 0;
     margin-left: auto;
     margin-right: auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    footer {
+        font-size: small;
+
+        ul {
+            li {
+                display: inline;
+            }
+        }
+    }
 }
 
 .snippet pre {

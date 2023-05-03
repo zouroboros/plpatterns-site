@@ -9,7 +9,7 @@ function searchResultHtml(result) {
 }
 
 export default async function ( { search }, container ) {
-    container.innerHTML = `<h1>Search patterns</h1>
+    container.innerHTML = `<h1>Search for pattern</h1>
     <div>
         <form id="search-form">
             <input id="search-input" type="text" value="${search ?? ""}"/>
