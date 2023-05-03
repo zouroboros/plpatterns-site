@@ -1,37 +1,12 @@
-import * as api from "./api.js"
-import * as links from "./links.js"
-import { highlight } from "./highlight.js"
-import * as cmark from "commonmark"
 import index from "./pages/index.js"
+import language from "./pages/language.js"
+import pattern from "./pages/pattern.js"
 import search from "./pages/search.js"
 
 const routes = {
    "^$": index,
-
-   "^/languages/(?<languageName>[a-zA-Z]+)$": async function ({ languageName }, container) {
-        container.innerHTML = `<h1>Examples for ${languageName}</h1>`
-        const pattern = await api.loadPatternByLanguage(languageName)
-        container.innerHTML += `<ul>
-                ${pattern.map(pattern => `<li>
-                    <a href="#${links.pattern(languageName, pattern.name)}">${pattern.name}</a>
-                </li>`).join(``)}
-            </ul>`
-    },
-    "^/pattern/(?<languageName>[a-zA-Z]+)/(?<patternName>[^\n\r/]+$)": async function ( { languageName, patternName }, container) {
-        const decodedPatterName = decodeURI(patternName)
-        container.innerHTML = `<h1>${decodedPatterName}</h1>`
-        const pattern = await api.loadPatternByLanguageAndName(languageName, decodedPatterName)
-        const highlightedCode = await highlight(languageName, pattern.code)
-        const reader = new cmark.Parser();
-        const writer = new cmark.HtmlRenderer();
-        const descriptionHtml = writer.render(reader.parse(pattern.description))
-        container.innerHTML += `<div class="snippet">
-                <pre>${highlightedCode}</pre>
-            </div>
-            <div>
-                <p>${descriptionHtml}</p>
-            </div>`
-    },
+   "^/languages/(?<languageName>[a-zA-Z]+)$": language,
+    "^/pattern/(?<languageName>[a-zA-Z]+)/(?<patternName>[^\n\r/]+$)": pattern,
     "^/search(/(?<search>[^\n\r/]+))?$": search
 }
 
