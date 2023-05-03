@@ -4,7 +4,7 @@ import * as links from "../links.js"
 function searchResultHtml(result) {
     const pattern = result.pattern
     return `<li>
-        <h3><a href="#${links.pattern(pattern.language.name, pattern.name)}">${pattern.name}</a></h3>
+        <a href="#${links.pattern(pattern.language.name, pattern.name)}">${pattern.name}</a>
     </li>`
 }
 

@@ -1,12 +1,45 @@
 @import url("highlight.js/styles/default.css");
 
+:root {
+    --horizontal-padding: 1rem;
+    --vertical-padding: 1rem;
+}
+
+html {
+    width: 100%;
+    font-family: "Lucida Console", Courier, monospace;
+}
+
+body {
+    max-width: 60rem;
+    padding-left: var(--horizontal-padding);
+    padding-right: var(--horizontal-padding);
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .snippet pre {
     counter-reset: line-number;
+    padding-top: var(--vertical-padding);
+    padding-bottom: var(--vertical-padding);
+    padding-left: var(--horizontal-padding);
+    padding-right: var(--horizontal-padding);
+    border: solid 0.1rem;
+    overflow: scroll;
 
     code::before {
         counter-increment: line-number;
         content: counter(line-number);
         display: inline;
-        margin-right: 1em;
+        margin-right: 1rem;
+    }
+}
+
+ul {
+    list-style-type: "-";
+    padding-inline-start: var(--horizontal-padding);
+
+    li.search-result::marker {
+        font-size: larger;
     }
 }
