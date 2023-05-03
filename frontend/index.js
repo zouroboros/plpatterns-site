@@ -1,25 +1,19 @@
 import * as api from "./api.js"
+import * as links from "./links.js"
 import { highlight } from "./highlight.js"
 import * as cmark from "commonmark"
+import index from "./pages/index.js"
+import search from "./pages/search.js"
 
 const routes = {
-   "^$": async function (groups, container) {
-        container.innerHTML = `<h1>Welcome to plpatterns</h1>
-            <p>the ultimate repository for patterns in any programming language</p>
-            <h2>Patterns by langauge</h2>`
-    
-        const languages = await api.loadLanguages()
-            container.innerHTML += `<ul>
-            ${languages.map(language => `<li><a href="#/languages/${language.name}">${language.name}</a></li>`).join(``)}
-            </ul>`
-   },
+   "^$": index,
 
    "^/languages/(?<languageName>[a-zA-Z]+)$": async function ({ languageName }, container) {
         container.innerHTML = `<h1>Examples for ${languageName}</h1>`
         const pattern = await api.loadPatternByLanguage(languageName)
         container.innerHTML += `<ul>
                 ${pattern.map(pattern => `<li>
-                    <a href="#/pattern/${languageName}/${pattern.name}">${pattern.name}</a>
+                    <a href="#${links.pattern(languageName, pattern.name)}">${pattern.name}</a>
                 </li>`).join(``)}
             </ul>`
     },
@@ -37,7 +31,8 @@ const routes = {
             <div>
                 <p>${descriptionHtml}</p>
             </div>`
-    }
+    },
+    "^/search(/(?<search>[^\n\r/]+))?$": search
 }
 
 function defaultRoute(url, container) {

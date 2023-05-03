@@ -35,3 +35,9 @@ export async function loadPatternByLanguageAndName(language, name) {
     const [ pattern ] = data.pattern
     return pattern
 }
+
+export async function loadSearchResults(searchFor) {
+    const data = await query('query pattern($searchFor: String!) { search(searchFor: $searchFor) { pattern { name, language { name }}}}', 
+        { searchFor })
+    return data.search
+}
