@@ -2,6 +2,8 @@ import index from "./pages/index.js"
 import language from "./pages/language.js"
 import pattern from "./pages/pattern.js"
 import search from "./pages/search.js"
+import notFound from "./pages/notFound.js"
+import error from "./pages/error.js"
 
 const routes = {
    "^$": index,
@@ -23,9 +25,14 @@ async function navigateTo(routes, url, defaultRoute) {
 
     if (matchedRoute !== undefined) {
         const [pattern, match] = matchedRoute
-        await routes[pattern](match.groups, mainElement)
+        try {
+            await routes[pattern](match.groups, mainElement)
+        } catch (exception) {
+            await error(exception, mainElement)
+        } 
+        
     } else {
-        await defaultRoute(url, mainElement)
+        await notFound(url, mainElement)
     }    
 }
 
