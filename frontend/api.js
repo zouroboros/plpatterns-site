@@ -25,19 +25,19 @@ export async function loadLanguages() {
 }
 
 export async function loadPatternByLanguage(language) {
-    const data = await query('query languageAndPattern($language: String!) { pattern(language: $language) { name } }', { language })
+    const data = await query('query languageAndPattern($language: String!) { pattern(language: $language) { name, alias } }', { language })
     return data.pattern
 }
 
-export async function loadPatternByLanguageAndName(language, name) {
-    const data = await query('query pattern($language: String!, $name: String!) { pattern(language: $language, name: $name) { name, code, description } }', 
-        { language, name })
+export async function loadPatternByLanguageAndName(language, alias) {
+    const data = await query('query pattern($language: String!, $alias: String!) { pattern(language: $language, alias: $alias) { name, code, description } }', 
+        { language, alias })
     const [ pattern ] = data.pattern
     return pattern
 }
 
 export async function loadSearchResults(searchFor) {
-    const data = await query('query pattern($searchFor: String!) { search(searchFor: $searchFor) { pattern { name, language { name }}}}', 
+    const data = await query('query pattern($searchFor: String!) { search(searchFor: $searchFor) { pattern { name, alias, language { name }}}}', 
         { searchFor })
     return data.search
 }

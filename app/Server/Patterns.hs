@@ -5,23 +5,22 @@
 
 module Server.Patterns(app) where
 
-import Data.Text (Text, isInfixOf, unpack)
+import Data.Text (Text, isInfixOf, unpack, pack)
 import Data.Morpheus (App, deriveApp)
 import Data.Morpheus.Types (GQLType, RootResolver(queryResolver), Undefined, defaultRootResolver, ResolverQ, liftEither)
 import GHC.Generics (Generic)
-import System.FilePath ((</>))
+import System.FilePath (FilePath, (</>))
 
-import ExampleDb(ExampleDb(..), 
-    Example(Example, id, name, description, example))
+import ExampleDb(ExampleDb(..), Example(..))
 import Data.Maybe (catMaybes, fromMaybe)
 
 data Language = Language { name :: Text } deriving (GQLType, Generic)
 
 data LanguageArgs = LanguageArgs { name :: Maybe Text } deriving (GQLType, Generic)
 
-data Pattern = Pattern { name :: Text, code :: Text, description :: Text, language :: Language } deriving (GQLType, Generic)
+data Pattern = Pattern { alias :: Text, name :: Text, code :: Text, description :: Text, language :: Language } deriving (GQLType, Generic)
 
-data PatternArgs = PatternArgs { language :: Text, name :: Maybe Text } deriving (GQLType, Generic)
+data PatternArgs = PatternArgs { language :: Text, alias :: Maybe Text } deriving (GQLType, Generic)
 
 data SearchArgs = SearchArgs { searchFor :: Text } deriving (GQLType, Generic)
 
@@ -51,11 +50,11 @@ getLanguages db LanguageArgs { name = query } = do
     return $ Right $ catMaybes languages
 
 getPattern :: Db -> PatternArgs -> IO (Either String [Pattern])
-getPattern db PatternArgs { language = language, name = Just name } = do
-    example <- exampleByCategoryAndName db language name
+getPattern db PatternArgs { language = language, alias = Just name } = do
+    example <- exampleByCategoryAndAlias db language name
     let pattern = fmap (toPattern Language { name = name }) example
     return $ maybe (Left "No example found") (\pattern -> Right [pattern]) pattern
-getPattern db PatternArgs { language = language, name = Nothing } = do
+getPattern db PatternArgs { language = language, alias = Nothing } = do
     examples <- examplesByCategory db language
     let pattern = fmap (map (toPattern Language { name = language })) examples
     return $ maybe (Left "No examples found") Right pattern
@@ -72,8 +71,8 @@ getSearchResults db SearchArgs { searchFor = searchFor } = do
     return $ Right results
 
 toPattern :: Language -> Example FilePath Text -> Pattern
-toPattern language Example { id = id, name = name, description = description, example = example } =
-    Pattern { name = name, code = example, description = description, language = language }
+toPattern language Example { alias = alias, name = name, description = description, example = example } =
+    Pattern { alias = alias, name = name, code = example, description = description, language = language }
 
 rootResolver :: Db -> RootResolver IO () Query Undefined Undefined
 rootResolver db = defaultRootResolver { queryResolver = Query { 

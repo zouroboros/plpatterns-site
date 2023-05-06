@@ -8,7 +8,7 @@ import error from "./pages/error.js"
 const routes = {
    "^$": index,
    "^/languages/(?<languageName>[a-zA-Z]+)$": language,
-    "^/pattern/(?<languageName>[a-zA-Z]+)/(?<patternName>[^\n\r/]+$)": pattern,
+    "^/pattern/(?<languageName>[a-zA-Z]+)/(?<alias>[^\n\r/]+$)": pattern,
     "^/search(/(?<search>[^\n\r/]+))?$": search
 }
 

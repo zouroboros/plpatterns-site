@@ -18,7 +18,7 @@ createDb basePath = ExampleDb {
     categories = FileBasedDb.categories basePath,
     examplesByCategory = FileBasedDb.examplesByCategory basePath,
     exampleById = FileBasedDb.exampleById basePath,
-    exampleByCategoryAndName = FileBasedDb.exampleByCategoryAndName basePath,
+    exampleByCategoryAndAlias = FileBasedDb.exampleByCategoryAndName basePath,
     searchForExamples = FileBasedDb.searchExamples basePath
 }
 
@@ -43,12 +43,14 @@ tryReadExample basePath exampleId = do
 readExample :: FilePath -> FilePath -> IO (Example FilePath T.Text)
 readExample basePath exampleId = do
     let examplePath = basePath </> exampleId
+    let alias = T.pack $ takeFileName examplePath
     files <- listDirectory examplePath
     (name, info) <- readInfo $ examplePath </> "info.md"
     let Just exampleFile = find (\file -> dropExtension file == "example") files
     exampleCode <- TIO.readFile $ examplePath </> exampleFile
     return Example {
         id = exampleId,
+        alias = alias,
         name = name,
         description = info,
         example = exampleCode

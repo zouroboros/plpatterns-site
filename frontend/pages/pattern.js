@@ -2,10 +2,10 @@ import * as api from "../api.js"
 import { highlight } from "../highlight.js"
 import * as cmark from "commonmark"
 
-export default async function ( { languageName, patternName }, container) {
-    const decodedPatterName = decodeURI(patternName)
-    container.innerHTML = `<h1>${decodedPatterName}</h1>`
-    const pattern = await api.loadPatternByLanguageAndName(languageName, decodedPatterName)
+export default async function ( { languageName, alias }, container) {
+    const decodedAlias = decodeURI(alias)
+    const pattern = await api.loadPatternByLanguageAndName(languageName, decodedAlias)
+    container.innerHTML = `<h1>${pattern.name}</h1>`
     const highlightedCode = await highlight(languageName, pattern.code)
     const reader = new cmark.Parser();
     const writer = new cmark.HtmlRenderer();

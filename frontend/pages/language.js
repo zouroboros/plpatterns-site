@@ -6,7 +6,7 @@ export default async function ({ languageName }, container) {
     const pattern = await api.loadPatternByLanguage(languageName)
     container.innerHTML += `<ul>
             ${pattern.map(pattern => `<li>
-                <a href="#${links.pattern(languageName, pattern.name)}">${pattern.name}</a>
+                <a href="#${links.pattern(languageName, pattern.alias)}">${pattern.name}</a>
             </li>`).join(``)}
         </ul>`
 }
