@@ -28,6 +28,7 @@ async function navigateTo(routes, url, defaultRoute) {
         try {
             await routes[pattern](match.groups, mainElement)
         } catch (exception) {
+            console.error(exception)
             await error(exception, mainElement)
         } 
         

@@ -29,8 +29,9 @@ export async function loadPatternByLanguage(language) {
     return data.pattern
 }
 
-export async function loadPatternByLanguageAndName(language, alias) {
-    const data = await query('query pattern($language: String!, $alias: String!) { pattern(language: $language, alias: $alias) { name, code, description } }', 
+export async function loadPatternByLanguageAndAlias(language, alias) {
+    const data = await query(`query pattern($language: String!, $alias: String!) { pattern(language: $language, alias: $alias) 
+        { name, parts {partType, title, text}} }`, 
         { language, alias })
     const [ pattern ] = data.pattern
     return pattern
