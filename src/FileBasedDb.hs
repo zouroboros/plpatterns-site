@@ -3,8 +3,8 @@
 
 module FileBasedDb where
 
-import CMark (NodeType(DOCUMENT, TEXT), Node(Node), commonmarkToNode, nodeToCommonmark)
-import ExampleDb (ExampleDb(..), Example(..))
+import CMark (NodeType(DOCUMENT, TEXT, PARAGRAPH, IMAGE), Node(Node), commonmarkToNode, nodeToCommonmark)
+import ExampleDb (ExampleDb(..), Example(..), ExamplePart(..))
 import System.Directory (listDirectory, doesDirectoryExist, makeAbsolute, findFile)
 import System.FilePath (takeFileName, (</>), dropExtension)
 import Data.Maybe (catMaybes)
@@ -45,23 +45,29 @@ readExample basePath exampleId = do
     let examplePath = basePath </> exampleId
     let alias = T.pack $ takeFileName examplePath
     files <- listDirectory examplePath
-    (name, info) <- readInfo $ examplePath </> "info.md"
-    let Just exampleFile = find (\file -> dropExtension file == "example") files
-    exampleCode <- TIO.readFile $ examplePath </> exampleFile
+    (name, parts) <- readInfo examplePath (examplePath </> "info.md")
     return Example {
         id = exampleId,
         alias = alias,
         name = name,
-        description = info,
-        example = exampleCode
+        parts = parts
     }
 
-readInfo :: FilePath -> IO (T.Text, T.Text)
-readInfo path = do
+readInfo :: FilePath -> FilePath -> IO (T.Text, [ExamplePart T.Text])
+readInfo basePath path = do
     content <- TIO.readFile path
-    let (Node _ DOCUMENT (header:rest)) = commonmarkToNode [] content    
-    return (nodeText header, 
-        nodeToCommonmark [] Nothing (Node Nothing DOCUMENT rest))
+    let (Node _ DOCUMENT (header:rest)) = commonmarkToNode [] content 
+    parts <- exampleParts basePath rest
+    return (nodeText header, parts)
+
+exampleParts :: FilePath -> [Node] -> IO [ExamplePart T.Text]
+exampleParts basePath nodes = sequence $ map (nodeToExamplePart basePath) nodes
+
+nodeToExamplePart :: FilePath -> Node -> IO (ExamplePart T.Text)
+nodeToExamplePart basePath (Node _ PARAGRAPH [Node _ (IMAGE fileName title) _] ) = do
+    code <- TIO.readFile $ basePath </> (T.unpack fileName)
+    return Code { title = title, code = code }
+nodeToExamplePart _ node = return (Markup { markup = nodeToCommonmark [] Nothing (Node Nothing DOCUMENT [node])})
 
 nodeText :: Node -> T.Text
 nodeText (Node _ (TEXT text) []) = text
@@ -83,7 +89,6 @@ exampleByCategoryAndName basePath category name = FileBasedDb.exampleById basePa
 searchExamples :: FilePath -> T.Text -> IO [(T.Text, Example FilePath T.Text)]
 searchExamples path searchTerm = 
     let search (category, example) = T.toLower searchTerm `T.isInfixOf` T.toLower (name example) 
-                                     || T.toLower searchTerm `T.isInfixOf` T.toLower (description example)
         retrieveCategory category = do examples <- FileBasedDb.examplesByCategory path category
                                        return $ examples >>= \examples -> return (category, examples)
     in do
