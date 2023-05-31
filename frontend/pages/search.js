@@ -1,15 +1,16 @@
 import * as api from "../api.js"
 import * as links from "../links.js"
+import { html } from "../htmlTemplate.js"
 
 function searchResultHtml(result) {
     const pattern = result.pattern
-    return `<li>
+    return html`<li>
         <a href="#${links.pattern(pattern.language.name, pattern.alias)}">${pattern.name} (${pattern.language.name})</a>
     </li>`
 }
 
 export default async function ( { search }, container ) {
-    container.innerHTML = `<h1>Search for pattern</h1>
+    container.innerHTML = html`<h1>Search for pattern</h1>
     <div>
         <form id="search-form">
             <input id="search-input" type="text" value="${search ?? ""}"/>
