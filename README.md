@@ -15,3 +15,22 @@ file based on the `.env.example` file and run the `stack run` command in the bas
 
 The frontend is built using npm + vite. In the frontend folder create a 
 `.env` file based on the `.env.example` file and run `npm run dev`.
+
+## Database structure
+
+root
+- javascript
+    - file-reading-nodejs
+        - info: meta information
+        - example.js: code example
+
+## Plan
+
+- lazy loading of common mark
+- compare side
+- code download
+- link to code on discord
+- show language and description on search page
+- improve search (search code, break search words)
+- write a proper readme for site and pattern repo
+- add favicon

@@ -50,8 +50,8 @@ body {
     code::before {
         counter-increment: line-number;
         content: counter(line-number);
-        display: inline;
-        margin-right: 1rem;
+        display: inline-block;
+        width: calc(2 * var(--horizontal-padding));
     }
 }
 
