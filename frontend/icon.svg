@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="144"
+   height="144"
+   viewBox="0 0 38.1 38.1"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="icon.png"
+   inkscape:export-xdpi="111.48"
+   inkscape:export-ydpi="111.48"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     showguides="true"
+     inkscape:zoom="4.2280779"
+     inkscape:cx="81.360847"
+     inkscape:cy="78.049649"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.276323"
+       id="rect234"
+       width="20.890345"
+       height="20.890343"
+       x="2.7839947"
+       y="2.7839947" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.276322"
+       id="rect234-3"
+       width="20.890345"
+       height="20.890345"
+       x="14.425661"
+       y="14.425661" />
+    <text
+       xml:space="preserve"
+       style="font-size:16.9333px;line-height:1.25;font-family:Lin;-inkscape-font-specification:Lin;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="3.6830029"
+       y="19.274355"
+       id="text425"><tspan
+         sodipodi:role="line"
+         id="tspan423"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:0.264583"
+         x="3.6830029"
+         y="19.274355">P</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9333px;line-height:1.25;font-family:Lin;-inkscape-font-specification:Lin;letter-spacing:0px;word-spacing:0px;stroke-width:0.264583"
+       x="24.815836"
+       y="30.916021"
+       id="text425-6"><tspan
+         sodipodi:role="line"
+         id="tspan423-7"
+         style="stroke-width:0.264583"
+         x="24.815836"
+         y="30.916021">L</tspan></text>
+  </g>
+</svg>
