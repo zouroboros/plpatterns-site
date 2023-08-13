@@ -12,19 +12,31 @@ export default async function ( { languageName, alias }, container) {
 }
 
 async function renderPart(languageName, part) {
-    if (part.partType === "Markup") {
-        const reader = new cmark.Parser();
-        const writer = new cmark.HtmlRenderer({ safe: true });
-        const partHtml = writer.render(reader.parse(part.text))
-        return `<div>
-            <p>${partHtml}</p>
-        </div>`
-    } else if (part.partType === "Code") {
-        const highlightedCode = await highlight(languageName, part.text)
-        return `<div class="snippet">
-            <pre>${highlightedCode}</pre>
-        </div>`
+    const renderFunctionByType = {
+        "Markup": renderMarkup,
+        "Code": renderCode
+    }
+
+    if (part.partType in renderFunctionByType) {
+        return await renderFunctionByType[part.partType](languageName, part)
     } else {
         throw new Error(`Unknown partType ${part.partType}`)
     }
+}
+
+async function renderMarkup(languageName, part) {
+    const reader = new cmark.Parser()
+    const writer = new cmark.HtmlRenderer({ safe: true })
+    const partHtml = writer.render(reader.parse(part.text))
+    return `<div>
+        <p>${partHtml}</p>
+    </div>`
+}
+
+async function renderCode(languageName, part) {
+    const highlightedCode = await highlight(languageName, part.text)
+    return `<figure>
+        <figcaption>${part.title}</figcaption>
+        <pre>${highlightedCode}</pre>
+    </figure>`
 }
