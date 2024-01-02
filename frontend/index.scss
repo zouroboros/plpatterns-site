@@ -4,11 +4,13 @@
     --horizontal-padding: 1rem;
     --vertical-padding: 1rem;
     --background-color: white;
+    --text-color: rgba(60, 60, 60, 1.0);
 }
 
 html {
     width: 100%;
     font-family: "Lucida Console", Courier, monospace;
+    color: var(--text-color);
     background-color: var(--background-color);
 }
 
@@ -67,6 +69,37 @@ figure {
         background-color: var(--background-color);
         padding-left: 0.2rem;
         padding-right: 0.2rem;
+    }
+
+    menu {
+        font-size: smaller;
+        position: absolute;
+        top: -1rem;
+        right: var(--horizontal-padding);
+        list-style: none;
+        margin: 0;
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
+        background-color: var(--background-color);
+
+        li {
+            display: inline-block;
+
+            &:hover, &:hover * {
+                cursor: pointer;
+                background-color: var(--text-color);
+            }
+
+            button {
+                background-color: unset;
+                margin: 0;
+                border: 0;
+            }
+
+            img {
+                height: 2em;
+            }
+        }
     }
 
     pre {
