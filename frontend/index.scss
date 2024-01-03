@@ -5,6 +5,7 @@
     --vertical-padding: 1rem;
     --background-color: white;
     --text-color: rgba(60, 60, 60, 1.0);
+    --inverted-text-color: rgba(250, 250, 250, 1.0);
 }
 
 html {
@@ -114,6 +115,25 @@ figure {
             display: inline-block;
             width: calc(2 * var(--horizontal-padding));
         }
+    }
+}
+
+.notification {
+    background-color: var(--text-color);
+    color: var(--inverted-text-color);
+
+    padding-top: var(--vertical-padding);
+    padding-bottom: var(--vertical-padding);
+    padding-left: var(--horizontal-padding);
+    padding-right: var(--horizontal-padding);
+
+    position: absolute;
+    right: 0;
+    opacity: 0;
+    transition: opacity 1s;
+
+    &.active {
+        opacity: 1;
     }
 }
 

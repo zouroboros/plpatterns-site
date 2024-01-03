@@ -41,11 +41,16 @@ async function renderMarkup(languageName, part, partId, container) {
 async function renderCode(languageName, part, partId, container) {
     const highlightedCode = await highlight(languageName, part.text)
     const copyButtonId = `part-${partId}-copy-button`
-    const html = `<figure>
+    const copyNotificationId = `part-${partId}-copy-notification`
+    const html = `
+    <figure>
         <figcaption>${part.title}</figcaption>
         <menu>
-            <li title="Copy example to clipboard"><button type="button" id="${copyButtonId}"><img src="${copySvg}" /></button></li>
+            <li title="Copy example to clipboard">
+                <button type="button" id="${copyButtonId}"><img src="${copySvg}" /></button>
+            </li>
         </menu>
+        <div class="notification" id="${copyNotificationId}">Copied</div>
         <pre>${highlightedCode}</pre>
     </figure>`
 
@@ -53,5 +58,8 @@ async function renderCode(languageName, part, partId, container) {
     
     container.querySelector(`#${copyButtonId}`).addEventListener("click", function () {
         navigator.clipboard.writeText(part.text)
+        const notification = container.querySelector(`#${copyNotificationId}`)
+        notification.classList.add("active")
+        setTimeout(() => notification.classList.remove("active"), 5000)
     })
 }
